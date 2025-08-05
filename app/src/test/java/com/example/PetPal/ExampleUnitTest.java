@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.PetPal;
 
 import org.junit.Test;
 
