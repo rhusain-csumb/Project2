@@ -9,6 +9,7 @@ package com.example.PetPal;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import androidx.room.Room;
 import com.example.PetPal.data.AppDatabase;
 import com.example.PetPal.model.User;
 import com.example.PetPal.dao.UserDao;
+import com.example.PetPal.PasswordUtil;
 
 /**
  * Activity for user registration in the PetPal app.
@@ -46,13 +48,19 @@ public class RegisterActivity extends AppCompatActivity {
                 .allowMainThreadQueries() //For testing only
                 .build();
 
-        // Bind UI elements
-        usernameInput = findViewById(R.id.register_username_input);
-        passwordInput = findViewById(R.id.register_password_input);
-        Button registerButton = findViewById(R.id.register_button);
+        // Initialize input fields
+        usernameInput = findViewById(R.id.username_input);
+        passwordInput = findViewById(R.id.password_input);
 
-        // Set button action
+        // Initialize buttons
+        Button registerButton = findViewById(R.id.register_button);
+        Button loginRedirectButton = findViewById(R.id.login_redirect_button);
+
+        // Handle register button
         registerButton.setOnClickListener(view -> registerUser());
+
+        // Handle login redirect
+        loginRedirectButton.setOnClickListener(view -> startActivity(new Intent(RegisterActivity.this, LoginActivity.class)));
     }
 
     /**
@@ -67,21 +75,23 @@ public class RegisterActivity extends AppCompatActivity {
         String username = usernameInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
             Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
             return;
         }
 
         UserDao userDao = db.userDao();
-        User existingUser = userDao.login(username, password);
+        User existingUser = userDao.login(username, PasswordUtil.hashPassword(password));
 
         if (existingUser != null) {
             Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show();
         } else {
-            User newUser = new User(username, password);
+            User newUser = new User(username, PasswordUtil.hashPassword(password));
             userDao.insert(newUser);
             Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
-            finish(); // Close RegisterActivity and go back to Login
+
+
+            finish(); //Go back to LoginActivity
         }
     }
 }

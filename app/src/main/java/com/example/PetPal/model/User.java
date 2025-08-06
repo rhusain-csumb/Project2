@@ -7,6 +7,7 @@
 
 package com.example.PetPal.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -16,7 +17,8 @@ import androidx.room.PrimaryKey;
  */
 
 @Entity
-public class User {
+public class
+User {
 
     /**
      * Primary key for the user (auto-generated).
@@ -38,5 +40,35 @@ public class User {
      * Indicated if the user has admin privileges
      */
     public boolean is_admin;
+
+    /**
+     * Default constructor required by Room
+     */
+    public User() {
+    }
+
+    /**
+     * Constructs a User object with the given username and password.
+     * @param user_name The username for login.
+     * @param user_password The hashed password.
+     */
+    public User(String user_name, String user_password) {
+        this.user_name = user_name;
+        this.user_password = user_password;
+        this.is_admin = false; //Default to regular user
+    }
+
+    /**
+     * Returns the username for display or debugging
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "User{" +
+                "user_id=" + user_id +
+                ", user_name='" + user_name + '\'' +
+                ", is_admin=" + is_admin +
+                '}';
+    }
 
 }

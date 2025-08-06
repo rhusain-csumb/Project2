@@ -49,11 +49,19 @@ public interface UserDao {
     /**
      * Retrieves a user by username and password (used for login).
      * @param username The username.
-     * @param password The password.
+     * @param password The hashed password.
      * @return The matching User object.
      */
-    @Query("SELECT * FROM User WHERE user_name = :username AND user_password = :passworf")
+    @Query("SELECT * FROM User WHERE user_name = :username AND user_password = :password")
     User login(String username, String password);
+
+    /**
+     * Checks whether a user exists with a given username (used for registration).
+     * @param username The username to check.
+     * @return The matching User object, or null if not found.
+     */
+    @Query("SELECT * FROM User WHERE user_name = :username")
+    User getUserByUsername(String username);
 
     /**
      * Updates a user's details.

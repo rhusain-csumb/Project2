@@ -8,7 +8,7 @@
 package com.example.PetPal;
 
 import android.os.Bundle;
-import android.view.View;
+import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,6 +18,7 @@ import androidx.room.Room;
 
 import com.example.PetPal.data.AppDatabase;
 import com.example.PetPal.model.User;
+import com.example.PetPal.dao.UserDao;
 
 /**
  * LoginActivity handles user authentication and account creation.
@@ -54,7 +55,11 @@ public class LoginActivity extends AppCompatActivity {
         Button signupButton = findViewById(R.id.signup_button);
 
         loginButton.setOnClickListener(view -> loginUser());
-        signupButton.setOnClickListener(view -> registerUser());
+        signupButton.setOnClickListener(view -> {
+            // Open the RegisterActivity Room
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
     }
 
     /**
@@ -65,35 +70,26 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameInput.getText().toString();
         String password = passwordInput.getText().toString();
 
-        User user = db.userDao().login(username, password);
-        if (user != null) {
-            Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-            //TODO: Navigate to dashboard or next screen
-        } else {
-            Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Registers a new user using the inputted username and password.
-     * Performs basic validation and stores the new user in the database.
-     */
-    private void registerUser(){
-        String username = usernameInput.getText().toString();
-        String password = passwordInput.getText().toString();
-
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Enter both username and password", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        User newUser = new User();
-        newUser.user_name = username;
-        newUser.user_password = password;
-        newUser.is_admin = false;
+        String hashedPassword = PasswordUtil.hashPassword(password);
+        User user = db.userDao().login(username, password);
 
-        db.userDao().insert(newUser);
-        Toast.makeText(this, "Account created!", Toast.LENGTH_SHORT).show();
+
+        if (user != null) {
+            Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+
+            //Navigate to dashboard or next screen
+            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+            startActivity(intent);
+            finish();
+
+        } else {
+            Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
