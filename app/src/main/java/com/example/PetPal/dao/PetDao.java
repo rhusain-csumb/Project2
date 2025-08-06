@@ -37,7 +37,7 @@ public interface PetDao {
      * @return A list of Pet objects.
      */
     @Query("SELECT * FROM Pet WHERE user_id =:userId")
-    List<Pet> getPetByUser(int userId);
+    List<Pet> getPetByOwner(int userId);
 
     /**
      * Retrieves a specific pet by ID.

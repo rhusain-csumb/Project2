@@ -37,7 +37,7 @@ public class Pet {
     /**
      * Pet's name.
      */
-    public String name;
+    public String pet_name;
 
     /**
      * Type/species of pet (ex: Dog, Cat and more).
@@ -48,6 +48,11 @@ public class Pet {
      * Pet's breed
      */
     public String breed;
+
+    /**
+     * Pet's age
+     */
+    public int age;
 
     /**
      * Birthdate of the pet in YYYY-MM-DD format.
