@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
-import com.example.PetPal.dao.PetDao;
-import com.example.PetPal.PetAdapter;
+import com.example.PetPal.adapter.PetAdapter;
 import com.example.PetPal.data.AppDatabase;
 import com.example.PetPal.model.Pet;
 
@@ -55,8 +54,8 @@ public class PetListActivity extends AppCompatActivity {
 
         List<Pet> petList = db.petDao().getPetByOwner(userID);
 
-        // Setup adapter
-        petAdapter = new PetAdapter(petList);
+        // Attach adapter
+        petAdapter = new PetAdapter(this, petList);
         recyclerView.setAdapter(petAdapter);
     }
 

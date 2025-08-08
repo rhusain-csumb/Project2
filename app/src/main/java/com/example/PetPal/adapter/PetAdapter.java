@@ -5,7 +5,7 @@
  * @authors: Rasna Husain and Chanroop Randhawa
  */
 
-package com.example.PetPal;
+package com.example.PetPal.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.PetPal.AddPetActivity;
+import com.example.PetPal.R;
 import com.example.PetPal.model.Pet;
 
 import java.util.List;
@@ -35,7 +37,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
      *
      * @param petList The list of pets to display.
      */
-    public PetAdapter(List<Pet> petList) {
+    public PetAdapter(Context context, List<Pet> petList) {
         this.context = context;
         this.petList = petList;
     }

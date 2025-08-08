@@ -18,7 +18,6 @@ import androidx.room.Room;
 
 import com.example.PetPal.data.AppDatabase;
 import com.example.PetPal.model.User;
-import com.example.PetPal.dao.UserDao;
 
 /**
  * LoginActivity handles user authentication and account creation.
