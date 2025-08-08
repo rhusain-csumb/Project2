@@ -20,6 +20,11 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_pets"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/empty_state"
         android:layout_width="match_parent"

@@ -10,20 +10,21 @@
         android:id="@+id/welcome_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:text="Welcome to PetPal"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"/>
 
     <Button
         android:id="@+id/add_pet_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Pet"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/view_pets_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="View My Pets" />
 

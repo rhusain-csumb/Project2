@@ -7,6 +7,8 @@
 
 package com.example.PetPal;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.PetPal.model.Pet;
+
 import java.util.List;
 
 /**
@@ -24,21 +27,23 @@ import java.util.List;
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
+    private Context context;
     private List<Pet> petList;
 
     /**
      * Constructor for PetAdapter.
+     *
      * @param petList The list of pets to display.
      */
     public PetAdapter(List<Pet> petList) {
+        this.context = context;
         this.petList = petList;
     }
 
     @NonNull
     @Override
     public PetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_pet, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_pet, parent, false);
         return new PetViewHolder(view);
     }
 
@@ -46,7 +51,15 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
         Pet pet = petList.get(position);
         holder.petNameText.setText(pet.pet_name);
-        holder.petSubtitleText.setText(pet.species + " • " + pet.breed);
+        holder.petSpeciesText.setText(pet.species + " • " + pet.breed);
+
+        // Click lister to edit pet
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, AddPetActivity.class);
+            intent.putExtra("user_id", pet.user_id);
+            intent.putExtra("pet_id", pet.pet_id); // Pass pet ID for editing
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -56,20 +69,20 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
     /**
      * Updates the list of pets in the adapter.
-     * @param pets The new list of pets.
+     * @param newPets The new list of pets.
      */
-    public void updatePets(List<Pet> pets) {
-        this.petList = pets;
+    public void updatePets(List<Pet> newPets) {
+        this.petList = newPets;
         notifyDataSetChanged();
     }
 
     static class PetViewHolder extends RecyclerView.ViewHolder {
-        TextView petNameText, petSubtitleText;
+        TextView petNameText, petSpeciesText;
 
-        PetViewHolder(View itemView) {
+        public PetViewHolder(@NonNull View itemView) {
             super(itemView);
             petNameText = itemView.findViewById(R.id.pet_name_text);
-            petSubtitleText = itemView.findViewById(R.id.pet_subtitle_text);
+            petSpeciesText = itemView.findViewById(R.id.pet_species_text);
         }
     }
 }
