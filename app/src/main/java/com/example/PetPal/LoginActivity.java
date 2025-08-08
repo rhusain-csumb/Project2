@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         String hashedPassword = PasswordUtil.hashPassword(password);
-        User user = db.userDao().login(username, password);
+        User user = db.userDao().login(username, hashedPassword);
 
 
         if (user != null) {
@@ -84,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
             //Navigate to dashboard or next screen
             Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+            intent.putExtra("user_id", user.user_id);
             startActivity(intent);
             finish();
 
