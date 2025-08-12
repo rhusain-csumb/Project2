@@ -18,14 +18,14 @@ import com.example.PetPal.dao.UserDao;
 import com.example.PetPal.dao.PetDao;
 import com.example.PetPal.dao.HealthLogDao;
 import com.example.PetPal.model.HealthLog;
-import com.example.PetPal.model.User;
+
 
 /**
  * AppDatabase serves as the main access point to the persisted data using the Room library.
  * This abstract class is annotated with @Database and contains the list of entities (tables), the database version, and abstract methods to access each DAO.
  */
 
-@Database(entities = {User.class, Pet.class, HealthLog.class}, version = 1)
+@Database(entities = {User.class, Pet.class, HealthLog.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     /**

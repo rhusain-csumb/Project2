@@ -16,9 +16,9 @@ import androidx.room.ForeignKey;
  * Each entry is tied to a specific pet and stores care/medical information such as vaccinations.
  */
 @Entity( foreignKeys = @ForeignKey(
-        entity = User.class,
-        parentColumns = "user_id",
-        childColumns = "user_id",
+        entity = Pet.class,
+        parentColumns = "pet_id",
+        childColumns = "pet_id",
         onDelete = ForeignKey.CASCADE
 ))
 public class HealthLog {
@@ -42,7 +42,7 @@ public class HealthLog {
     /**
      * Detailed description of the log entry.
      */
-    public String descritpion;
+    public String description;
 
     /**
      * Date of the event in YYY-MM-DD format.

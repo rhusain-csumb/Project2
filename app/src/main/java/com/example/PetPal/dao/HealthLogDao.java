@@ -12,6 +12,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import androidx.room.Delete;
+import androidx.room.*;
 
 import com.example.PetPal.model.HealthLog;
 
@@ -36,8 +37,11 @@ public interface HealthLogDao {
      * @param petId The ID of the pet.
      * @return A list of HealthLog entries.
      */
-    @Query("SELECT * FROM HealthLog WHERE pet_id = :petId")
+    @Query("SELECT * FROM HealthLog WHERE pet_id = :petId ORDER BY date DESC, log_id DESC")
     List<HealthLog> getLogsByPet(int petId);
+
+    @Query("SELECT * FROM HealthLog WHERE log_id = :logId")
+    HealthLog getLogById(int logId);
 
     /**
      * Updates an existing health log.
