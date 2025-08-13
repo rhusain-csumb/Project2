@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            startActivity(LoginActivity.newIntent(MainActivity.this));
+            //startActivity(LoginActivity.newIntent(MainActivity.this));
             finish();
         }).start();
     }
