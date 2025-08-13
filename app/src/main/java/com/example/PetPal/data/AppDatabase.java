@@ -10,9 +10,6 @@ package com.example.PetPal.data;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
-import com.example.PetPal.dao.UserDao;
-import com.example.PetPal.dao.PetDao;
-import com.example.PetPal.dao.HealthLogDao;
 import com.example.PetPal.model.User;
 import com.example.PetPal.model.Pet;
 import com.example.PetPal.model.HealthLog;

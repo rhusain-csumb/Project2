@@ -19,7 +19,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
-import com.example.PetPal.dao.UserDao;
 import com.example.PetPal.data.AppDatabase;
 import com.example.PetPal.model.User;
 
