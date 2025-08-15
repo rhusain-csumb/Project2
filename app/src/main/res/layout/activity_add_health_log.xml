@@ -9,79 +9,127 @@
 
     <TextView
         android:id="@+id/add_log_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/add_health_log_next"
-        android:textSize="24sp"
+        android:text="@string/add_health_log"
+        android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/back_button_add_log"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/back_button"
-        app:layout_constraintBaseline_toBaselineOf="@id/add_log_title"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/log_type_edit_text"
+    <!-- TYPE: swap to MaterialAutoCompleteTextView, keep SAME ID -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/log_type_container"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="@string/log_type_e_g_vet_visit_medication"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:hint="@string/type"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@id/add_log_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_log_title" />
-
-    <EditText
-        android:id="@+id/log_date_edit_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/date_yyyy_mm_dd"
-        android:inputType="date"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/log_type_edit_text" />
+        android:layout_marginTop="12dp">
 
-    <EditText
-        android:id="@+id/log_description_edit_text"
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/log_type_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:imeOptions="actionNext"
+            android:hint="@string/type" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- DATE (click to pick date+time; same ID as before) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/log_date_container"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:hint="@string/date_time"
+        app:layout_constraintTop_toBottomOf="@id/log_type_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/log_date_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:inputType="none"
+            android:hint="@string/date_time" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- DESCRIPTION -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/log_description_container"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:hint="@string/description"
-        android:inputType="textMultiLine"
-        android:gravity="top"
-        android:minLines="3"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/log_date_container"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/log_date_edit_text" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp">
 
-    <EditText
-        android:id="@+id/log_treatment_edit_text"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/log_description_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:hint="@string/description" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- TREATMENT / NOTES -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/log_treatment_container"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="@string/treatment"
+        app:layout_constraintTop_toBottomOf="@id/log_description_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/log_treatment_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="1"
+            android:maxLines="4"
+            android:hint="@string/treatment" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- BUTTONS -->
+    <LinearLayout
+        android:id="@+id/add_log_buttons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
         android:layout_marginTop="16dp"
-        android:hint="@string/treatment_given_"
-        android:inputType="textMultiLine"
-        android:minLines="3"
-        android:gravity="top"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/log_treatment_container"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/log_description_edit_text" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/save_log_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/save_log"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/log_treatment_edit_text" />
+        <Button
+            android:id="@+id/back_button_add_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back" />
+
+        <Space
+            android:layout_width="12dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/save_log_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
