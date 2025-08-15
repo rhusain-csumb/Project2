@@ -20,7 +20,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.PetPal.data.AppDatabase;
+import com.example.PetPal.dao.HealthLogDao;
+import com.example.PetPal.model.HealthLog;
+
 import java.util.Calendar;
+import java.util.concurrent.Executors;
 
 public class AppointmentActivity extends AppCompatActivity {
 
@@ -106,12 +111,36 @@ public class AppointmentActivity extends AppCompatActivity {
     }
 
     private void saveAppointment() {
-        if (selectedDate != null && selectedTime != null) {
-            String message = "Appointment for Pet ID " + petId + " scheduled for " + selectedDate + " at " + selectedTime;
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-            finish();
-        } else {
-            Toast.makeText(this, "Please select a date and time.", Toast.LENGTH_SHORT).show();
-        }
+    if (selectedDate == null || selectedTime == null) {
+        Toast.makeText(this, "Please select a date and time.", Toast.LENGTH_SHORT).show();
+        return;
     }
+
+   
+    int petId = getIntent().getIntExtra("PET_ID", -1);
+    if (petId == -1) {
+        Toast.makeText(this, "Missing pet context.", Toast.LENGTH_SHORT).show();
+        return;
+    }
+
+    final String combined = selectedDate + " " + selectedTime; // fits existing String 'date' field
+
+    Executors.newSingleThreadExecutor().execute(() -> {
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        HealthLogDao dao = db.healthLogDao();
+
+        HealthLog log = new HealthLog();
+        log.setPetId(petId);
+        log.setType("Appointment"); // reuse existing 'type' column
+        log.setDate(combined); // store date + time in the existing 'date' String
+        log.setDescription("Scheduled appointment");
+        log.setTreatment("");         
+
+        dao.insert(log);
+
+        runOnUiThread(() -> {
+            Toast.makeText(this, "Appointment saved: " + combined, Toast.LENGTH_LONG).show();
+            finish();
+        });
+    });
 }
