@@ -1,6 +1,8 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    alias(libs.plugins.android.application)
+//    id 'com.android.application'
+    //  id 'org.jetbrains.kotlin.android'
+    //id 'kotlin-kapt'
 }
 
 android {
@@ -8,7 +10,7 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.example.project2"
+        applicationId "com.example.PetPal"
         minSdk 24
         targetSdk 36
         versionCode 1
@@ -35,13 +37,16 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
-    implementation libs.room.runtime.android
+    implementation libs.room.common.jvm
     implementation libs.room.runtime.android
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    implementation(libs.bundles.room)
-    ksp(libs.room.compiler) // or use 'kapt' if not using KSP
+    def room_version = "2.6.1" // Use the latest stable version
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 
 }
+
