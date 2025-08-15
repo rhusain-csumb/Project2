@@ -5,22 +5,45 @@
  * @authors: Rasna Husain and Chanroop Randhawa
  */
 
+
+
 package com.example.PetPal.data;
 
+import android.content.Context;
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.PetPal.model.User;
-import com.example.PetPal.model.Pet;
+import com.example.PetPal.dao.HealthLogDao;
+import com.example.PetPal.dao.PetDao;
+import com.example.PetPal.dao.UserDao;
 import com.example.PetPal.model.HealthLog;
+import com.example.PetPal.model.Pet;
+import com.example.PetPal.model.User;
 
-/**
- * Main database class for the PetPal application.
- * Defines the database schema and provides access to DAOs.
- */
-@Database(entities = {User.class, Pet.class, HealthLog.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Pet.class, HealthLog.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
+
     public abstract UserDao userDao();
     public abstract PetDao petDao();
     public abstract HealthLogDao healthLogDao();
+
+    private static volatile AppDatabase INSTANCE;
+
+    public static AppDatabase getDatabase(final Context context) {
+        if (INSTANCE == null) {
+            synchronized (AppDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                    AppDatabase.class, "pet-pal-db")
+                            .fallbackToDestructiveMigration()
+                            .build();
+                }
+            }
+        }
+        return INSTANCE;
+    }
 }
+
+
+

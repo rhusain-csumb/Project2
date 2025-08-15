@@ -26,4 +26,6 @@ public interface UserDao {
 
     @Query("SELECT * FROM users")
     List<User> getAllUsers();
+
 }
+
