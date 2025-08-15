@@ -8,43 +8,80 @@
 package com.example.PetPal.model;
 
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
-/**
- * Represents a health log entry for a pet.
- * Each log entry is associated with a specific pet via foreign key.
- */
-@Entity(foreignKeys = @ForeignKey(
-        entity = Pet.class,
-        parentColumns = "pet_id",
-        childColumns = "pet_id",
-        onDelete = ForeignKey.CASCADE
-))
+import static androidx.room.ForeignKey.CASCADE;
+
+@Entity(tableName = "health_logs",
+        foreignKeys = @ForeignKey(entity = Pet.class,
+                parentColumns = "pet_id",
+                childColumns = "pet_id",
+                onDelete = CASCADE))
 public class HealthLog {
-    /**
-     * Primary key for the health log (auto-generated).
-     */
     @PrimaryKey(autoGenerate = true)
-    public int log_id;
+    private int id;
+    private int pet_id;
+    private String type;
+    private String date;
+    private String description;
+    private String treatment;
 
-    /**
-     * ID of the pet this log entry belongs to (foreign key).
-     */
-    public int pet_id;
+    public HealthLog(int pet_id, String type, String date, String description, String treatment) {
+        this.pet_id = pet_id;
+        this.type = type;
+        this.date = date;
+        this.description = description;
+        this.treatment = treatment;
+    }
 
-    /**
-     * Type of log entry (e.g., Vaccination, Vet Visit, Medication).
-     */
-    public String type;
+    // Getters
+    public int getId() {
+        return id;
+    }
 
-    /**
-     * The date of the event in YYYY-MM-DD format.
-     */
-    public String date;
+    public int getPet_id() {
+        return pet_id;
+    }
 
-    /**
-     * Description or notes for the log entry.
-     */
-    public String description;
+    public String getType() {
+        return type;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getTreatment() {
+        return treatment;
+    }
+
+    // Setters (required by Room)
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPet_id(int pet_id) {
+        this.pet_id = pet_id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTreatment(String treatment) {
+        this.treatment = treatment;
+    }
 }
