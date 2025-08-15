@@ -6,9 +6,12 @@
  */
 package com.example.PetPal;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,6 +24,9 @@ import com.example.PetPal.model.HealthLog;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class AddHealthLogActivity extends AppCompatActivity {
 
@@ -58,6 +64,49 @@ public class AddHealthLogActivity extends AppCompatActivity {
         AppDatabase db = AppDatabase.getDatabase(this);
         healthLogDao = db.healthLogDao();
         executorService = Executors.newSingleThreadExecutor();
+
+        //For date field to pick both date and time and store in the same String
+         logDateEditText.setFocusable(false);
+        logDateEditText.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            new DatePickerDialog(
+                    this,
+                    (view, year, month, day) -> {
+                        cal.set(Calendar.YEAR, year);
+                        cal.set(Calendar.MONTH, month);
+                        cal.set(Calendar.DAY_OF_MONTH, day);
+
+                        new TimePickerDialog(
+                                this,
+                                (timeView, hour, minute) -> {
+                                    cal.set(Calendar.HOUR_OF_DAY, hour);
+                                    cal.set(Calendar.MINUTE, minute);
+                                    SimpleDateFormat fmt =
+                                            new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                                    logDateEditText.setText(fmt.format(cal.getTime()));
+                                },
+                                cal.get(Calendar.HOUR_OF_DAY),
+                                cal.get(Calendar.MINUTE),
+                                false
+                        ).show();
+                    },
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DAY_OF_MONTH)
+            ).show();
+        });
+
+        //Populate Type with suggestions (Appointment / Vaccination / Medication / Other)
+        String[] types = {"Appointment", "Vaccination", "Medication", "Other"};
+        try {
+            android.widget.AutoCompleteTextView actv =
+                    (android.widget.AutoCompleteTextView) logTypeEditText;
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this, android.R.layout.simple_list_item_1, types);
+            actv.setAdapter(adapter);
+        } catch (ClassCastException ignored) {
+            // If the view is still a plain EditText, users can type the value manually.
+        }
 
         saveLogButton.setOnClickListener(v -> saveHealthLog());
         backButton.setOnClickListener(v -> finish());
