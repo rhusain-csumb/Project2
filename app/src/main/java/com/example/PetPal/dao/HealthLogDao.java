@@ -12,52 +12,27 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-
 import com.example.PetPal.model.HealthLog;
-
 import java.util.List;
 
-/**
- * Data Access Object for the HealthLog table.
- * Defines methods for interacting with health log-related data in the database.
- */
 @Dao
 public interface HealthLogDao {
 
-    /**
-     * Inserts a new health log into the database
-     * @param log The health log to insert.
-     */
     @Insert
-    void insert(HealthLog log);
+    void insert(HealthLog healthLog);
 
-    /**
-     * Retrieves a list of all health logs for a given pet.
-     * @param petId The pet_id of the pet.
-     * @return List of health logs belonging to the pet.
-     */
-    @Query("SELECT * FROM HealthLog WHERE pet_id = :petId")
+    @Update
+    void update(HealthLog healthLog);
+
+    @Delete
+    void delete(HealthLog healthLog);
+
+    @Query("SELECT * FROM health_logs WHERE pet_id = :petId ORDER BY date DESC")
     List<HealthLog> getLogsByPet(int petId);
 
-    /**
-     * Retrieves a specific health log by its ID.
-     * @param id The log_id of the log.
-     * @return The matching HealthLog object.
-     */
-    @Query("SELECT * FROM HealthLog WHERE log_id = :id")
+    @Query("SELECT * FROM health_logs WHERE id = :id")
     HealthLog getLogById(int id);
 
-    /**
-     * Updates a health log's details.
-     * @param log The health log to update.
-     */
-    @Update
-    void update(HealthLog log);
-
-    /**
-     * Deletes a health log from the database.
-     * @param log The health log to delete.
-     */
-    @Delete
-    void delete(HealthLog log);
+    @Query("SELECT * FROM health_logs")
+    List<HealthLog> getAllLogs();
 }
