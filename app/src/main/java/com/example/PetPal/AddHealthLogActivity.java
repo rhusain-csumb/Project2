@@ -11,6 +11,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -94,6 +95,18 @@ public class AddHealthLogActivity extends AppCompatActivity {
                     cal.get(Calendar.DAY_OF_MONTH)
             ).show();
         });
+
+        //Populate Type with suggestions (Appointment / Vaccination / Medication / Other)
+        String[] types = {"Appointment", "Vaccination", "Medication", "Other"};
+        try {
+            android.widget.AutoCompleteTextView actv =
+                    (android.widget.AutoCompleteTextView) logTypeEditText;
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this, android.R.layout.simple_list_item_1, types);
+            actv.setAdapter(adapter);
+        } catch (ClassCastException ignored) {
+            // If the view is still a plain EditText, users can type the value manually.
+        }
 
         saveLogButton.setOnClickListener(v -> saveHealthLog());
         backButton.setOnClickListener(v -> finish());
