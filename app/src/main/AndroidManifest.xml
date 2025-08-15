@@ -20,6 +20,37 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false"
+            android:parentActivityName=".LoginActivity" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".AddPetActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".PetListActivity"
+            android:exported="false" />
+
+        <activity android:name=".PetProfileActivity" />
+        <activity android:name=".HealthLogDetailActivity" />
+        <activity android:name=".HealthLogActivity" />
+        <activity android:name=".AppointmentActivity" />
     </application>
 
 </manifest>

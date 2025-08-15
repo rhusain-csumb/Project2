@@ -9,7 +9,11 @@ activity = "1.10.1"
 constraintlayout = "2.2.1"
 room-version = "2.6.1"
 roomRuntimeAndroid = "2.7.2"
+
 room = "2.6.1"
+
+
+roomCommonJvm = "2.7.2"
 
 
 [libraries]
@@ -24,7 +28,11 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room-version" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room-version" }
 room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
+
 room-common = { group = "androidx.room", name = "room-common", version.ref = "room" }
+
+room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+
 
 [bundles]
 room = ["room-runtime", "room-ktx", "room-compiler"]
