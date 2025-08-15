@@ -1,3 +1,10 @@
+/**
+ * This is an android moble application called PetPal. This practical app will track pet visits,
+ * vaccinations, feeding schedules, and medications. Key features will include an emergency contact list
+ * and the potential to scan food/medication for streamlined data entry.
+ * @authors: Rasna Husain and Chanroop Randhawa
+ */
+
 package com.example.PetPal.adapter;
 
 import android.view.LayoutInflater;
@@ -13,57 +20,62 @@ import com.example.PetPal.model.Pet;
 
 import java.util.List;
 
-public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetHolder> {
+public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
-    private List<Pet> pets;
-    private final OnPetClickListener onPetClickListener;
+    private List<Pet> petList;
+    private final OnPetClickListener listener;
 
     public interface OnPetClickListener {
         void onPetClick(Pet pet);
     }
 
-    public PetAdapter(List<Pet> pets, OnPetClickListener listener) {
-        this.pets = pets;
-        this.onPetClickListener = listener;
+    public PetAdapter(List<Pet> petList, OnPetClickListener listener) {
+        this.petList = petList;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public PetHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pet, parent, false);
-        return new PetHolder(view);
+        return new PetViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PetHolder holder, int position) {
-        Pet pet = pets.get(position);
-        holder.bind(pet, onPetClickListener);
+    public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
+        Pet pet = petList.get(position);
+        holder.bind(pet, listener);
     }
 
     @Override
     public int getItemCount() {
-        return pets.size();
+        return petList.size();
     }
 
     public void updatePets(List<Pet> newPets) {
-        this.pets = newPets;
+        this.petList = newPets;
         notifyDataSetChanged();
     }
 
-    static class PetHolder extends RecyclerView.ViewHolder {
+    static class PetViewHolder extends RecyclerView.ViewHolder {
         private final TextView petNameTextView;
-        private final TextView petDetailsTextView;
+        private final TextView petSpeciesTextView;
 
-        public PetHolder(@NonNull View itemView) {
+        public PetViewHolder(@NonNull View itemView) {
             super(itemView);
             petNameTextView = itemView.findViewById(R.id.pet_name_text_view);
-            petDetailsTextView = itemView.findViewById(R.id.pet_details_text_view);
+            petSpeciesTextView = itemView.findViewById(R.id.pet_species_text_view);
         }
 
         public void bind(final Pet pet, final OnPetClickListener listener) {
             petNameTextView.setText(pet.pet_name);
-            petDetailsTextView.setText(pet.species + " • " + pet.breed);
-            itemView.setOnClickListener(v -> listener.onPetClick(pet));
+            petSpeciesTextView.setText(pet.species);
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onPetClick(pet);
+                }
+            });
         }
     }
 }
