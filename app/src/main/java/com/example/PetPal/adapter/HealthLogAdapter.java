@@ -46,6 +46,11 @@ public class HealthLogAdapter extends RecyclerView.Adapter<HealthLogAdapter.Heal
     public void onBindViewHolder(@NonNull HealthLogViewHolder holder, int position) {
         HealthLog currentLog = healthLogs.get(position);
 
+        String type = safe(currentLog.getType());
+        String date = safe(currentLog.getDate());  // may contain "yyyy-MM-dd HH:mm"
+        String desc = safe(currentLog.getDescription());
+        String treat = safe(currentLog.getTreatment());
+
         holder.logTypeTextView.setText(currentLog.getType());
         holder.logDateTextView.setText(currentLog.getDate());
         holder.logDescriptionTextView.setText(currentLog.getDescription());
@@ -60,6 +65,10 @@ public class HealthLogAdapter extends RecyclerView.Adapter<HealthLogAdapter.Heal
     @Override
     public int getItemCount() {
         return healthLogs.size();
+    }
+
+    private static String saf(String s) {
+        return s == null ? "" : s;
     }
 
     static class HealthLogViewHolder extends RecyclerView.ViewHolder {
