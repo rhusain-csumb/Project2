@@ -4,52 +4,47 @@
  * and the potential to scan food/medication for streamlined data entry.
  * @authors: Rasna Husain and Chanroop Randhawa
  */
-
 package com.example.PetPal;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.PetPal.adapter.HealthLogAdapter;
-import com.example.PetPal.data.AppDatabase;
-import com.example.PetPal.dao.HealthLogDao;
-import com.example.PetPal.model.HealthLog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.PetPal.adapter.HealthLogAdapter;
+import com.example.PetPal.dao.HealthLogDao;
+import com.example.PetPal.data.AppDatabase;
+import com.example.PetPal.model.HealthLog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class HealthLogActivity extends AppCompatActivity {
-    private RecyclerView healthLogRecycler;
-    private HealthLogAdapter healthLogAdapter;
-    private TextView healthLogTitle, emptyStateTextView;
-    private Button addLogButton;
 
+    private RecyclerView healthLogRecyclerView;
+    private HealthLogAdapter adapter;
     private HealthLogDao healthLogDao;
-    private int currentPetId;
+    private ExecutorService executorService;
+    private TextView noLogsTextView;
+    private Button backButton;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private static final String EXTRA_PET_ID = "com.example.PetPal.pet_id";
-    private static final String EXTRA_PET_NAME = "com.example.PetPal.pet_name";
+    private int petId;
+    private String petName;
 
     public static Intent newIntent(Context packageContext, int petId, String petName) {
         Intent intent = new Intent(packageContext, HealthLogActivity.class);
-        intent.putExtra(EXTRA_PET_ID, petId);
-        intent.putExtra(EXTRA_PET_NAME, petName);
+        intent.putExtra("PET_ID", petId);
+        intent.putExtra("PET_NAME", petName);
         return intent;
     }
 
@@ -58,30 +53,37 @@ public class HealthLogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_health_log);
 
-        healthLogRecycler = findViewById(R.id.health_log_recycler);
-        healthLogTitle = findViewById(R.id.health_log_title);
-        emptyStateTextView = findViewById(R.id.empty_state_log);
-        addLogButton = findViewById(R.id.add_log_button);
+        petId = getIntent().getIntExtra("PET_ID", -1);
+        petName = getIntent().getStringExtra("PET_NAME");
 
-        healthLogRecycler.setLayoutManager(new LinearLayoutManager(this));
-        healthLogAdapter = new HealthLogAdapter(new ArrayList<>());
-        healthLogRecycler.setAdapter(healthLogAdapter);
-
-        healthLogDao = Room.databaseBuilder(this, AppDatabase.class, "pet-pal-db").build().healthLogDao();
-
-        currentPetId = getIntent().getIntExtra(EXTRA_PET_ID, -1);
-        String petName = getIntent().getStringExtra(EXTRA_PET_NAME);
-
-        if (currentPetId == -1 || petName == null) {
-            Toast.makeText(this, "Pet ID not found.", Toast.LENGTH_SHORT).show();
+        if (petId == -1) {
+            Toast.makeText(this, "Error: Pet ID not found.", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
-        healthLogTitle.setText("Health Logs for " + petName);
-        addLogButton.setOnClickListener(v -> {
-            // TODO: Implement the logic for adding a new health log
-            // You will need a new activity for this
+        healthLogRecyclerView = findViewById(R.id.health_log_recycler_view);
+        noLogsTextView = findViewById(R.id.no_logs_text_view);
+        backButton = findViewById(R.id.back_button_health_log);
+
+        FloatingActionButton addLogFab = findViewById(R.id.add_log_fab);
+        addLogFab.setOnClickListener(view -> {
+            Intent intent = new Intent(HealthLogActivity.this, AddHealthLogActivity.class);
+            intent.putExtra("PET_ID", petId);
+            startActivity(intent);
         });
+
+        AppDatabase db = AppDatabase.getDatabase(this);
+        healthLogDao = db.healthLogDao();
+        executorService = Executors.newSingleThreadExecutor();
+
+        adapter = new HealthLogAdapter(this);
+        healthLogRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        healthLogRecyclerView.setAdapter(adapter);
+
+        backButton.setOnClickListener(v -> finish());
+
+        loadHealthLogs();
     }
 
     @Override
@@ -91,18 +93,24 @@ public class HealthLogActivity extends AppCompatActivity {
     }
 
     private void loadHealthLogs() {
-        executor.execute(() -> {
-            List<HealthLog> logs = healthLogDao.getLogsByPet(currentPetId);
-            mainHandler.post(() -> {
-                healthLogAdapter.updateLogs(logs);
-                if (logs.isEmpty()) {
-                    emptyStateTextView.setVisibility(View.VISIBLE);
-                    healthLogRecycler.setVisibility(View.GONE);
+        executorService.execute(() -> {
+            List<HealthLog> logs = healthLogDao.getLogsByPet(petId);
+            runOnUiThread(() -> {
+                if (logs != null && !logs.isEmpty()) {
+                    adapter.setHealthLogs(logs);
+                    noLogsTextView.setVisibility(View.GONE);
+                    healthLogRecyclerView.setVisibility(View.VISIBLE);
                 } else {
-                    emptyStateTextView.setVisibility(View.GONE);
-                    healthLogRecycler.setVisibility(View.VISIBLE);
+                    noLogsTextView.setVisibility(View.VISIBLE);
+                    healthLogRecyclerView.setVisibility(View.GONE);
                 }
             });
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
     }
 }

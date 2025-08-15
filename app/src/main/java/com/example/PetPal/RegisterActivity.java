@@ -7,36 +7,37 @@
 
 package com.example.PetPal;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.PetPal.data.AppDatabase;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.PetPal.dao.UserDao;
+import com.example.PetPal.data.AppDatabase;
 import com.example.PetPal.model.User;
+import com.example.PetPal.PasswordUtil;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText usernameInput, passwordInput;
-    private Button registerButton, loginRedirectButton;
-    private UserDao userDao;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private static final String EXTRA_USER_ID = "com.example.PetPal.user_id";
+    private EditText usernameEditText;
+    private EditText passwordEditText;
+    private Button registerButton;
+    private Button backButton;
+
+    private UserDao userDao;
+    private ExecutorService executorService;
 
     public static Intent newIntent(Context packageContext) {
-        return new Intent(packageContext, RegisterActivity.class);
+        Intent intent = new Intent(packageContext, RegisterActivity.class);
+        return intent;
     }
 
     @Override
@@ -44,38 +45,51 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        usernameInput = findViewById(R.id.username_input);
-        passwordInput = findViewById(R.id.password_input);
+        usernameEditText = findViewById(R.id.username_edit_text);
+        passwordEditText = findViewById(R.id.password_edit_text);
         registerButton = findViewById(R.id.register_button);
-        loginRedirectButton = findViewById(R.id.login_redirect_button);
+        backButton = findViewById(R.id.back_button_register);
 
-        userDao = Room.databaseBuilder(this, AppDatabase.class, "pet-pal-db").build().userDao();
+        AppDatabase db = AppDatabase.getDatabase(this);
+        userDao = db.userDao();
+        executorService = Executors.newSingleThreadExecutor();
 
         registerButton.setOnClickListener(v -> registerUser());
-        loginRedirectButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> finish());
     }
 
     private void registerUser() {
-        String username = usernameInput.getText().toString().trim();
-        String password = passwordInput.getText().toString().trim();
+        String username = usernameEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-            mainHandler.post(() -> Toast.makeText(this, "Username and password cannot be empty", Toast.LENGTH_SHORT).show());
+            Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        executor.execute(() -> {
-            User existingUser = userDao.getUserByUsername(username);
+        executorService.execute(() -> {
+            User existingUser = userDao.findUserByUsername(username);
+
             if (existingUser != null) {
-                mainHandler.post(() -> Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(this, "Username already exists.", Toast.LENGTH_SHORT).show());
             } else {
-                User newUser = new User(username, PasswordUtil.hashPassword(password));
+                String hashedPassword = PasswordUtil.hashPassword(password);
+                Log.d("RegisterActivity", "Registering new user: " + username + " with hashed password: " + hashedPassword);
+                User newUser = new User(username, hashedPassword);
                 userDao.insert(newUser);
-                mainHandler.post(() -> {
+                runOnUiThread(() -> {
                     Toast.makeText(this, "Registration successful! Please log in.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
                     finish();
                 });
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
     }
 }

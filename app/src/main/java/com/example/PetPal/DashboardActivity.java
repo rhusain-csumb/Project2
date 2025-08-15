@@ -4,25 +4,34 @@
  * and the potential to scan food/medication for streamlined data entry.
  * @authors: Rasna Husain and Chanroop Randhawa
  */
+// DashboardActivity.java (full code)
 
 package com.example.PetPal;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class DashboardActivity extends AppCompatActivity {
-    private Button addPetButton, viewPetsButton;
     private int currentUserId;
+    private TextView welcomeTextView;
+    private Button addPetButton;
+    private Button viewPetsButton;
+    private Button logoutButton;
+    private String currentUsername;
 
-    private static final String EXTRA_USER_ID = "com.example.PetPal.user_id";
+    private static final String EXTRA_USER_ID = "com.example.petpal.user_id";
+    private static final String EXTRA_USERNAME = "com.example.petpal.username"; // New constant for username
 
-    public static Intent newIntent(Context packageContext, int userId) {
+    // Update the newIntent method to accept the username
+    public static Intent newIntent(Context packageContext, int userId, String username) {
         Intent intent = new Intent(packageContext, DashboardActivity.class);
         intent.putExtra(EXTRA_USER_ID, userId);
+        intent.putExtra(EXTRA_USERNAME, username); // Put the username into the intent
         return intent;
     }
 
@@ -31,14 +40,24 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        // Get user ID and username from the intent
+        currentUserId = getIntent().getIntExtra(EXTRA_USER_ID, -1);
+        currentUsername = getIntent().getStringExtra(EXTRA_USERNAME);
+
+        if (currentUserId == -1 || currentUsername == null) {
+            Toast.makeText(this, "User information not found.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        welcomeTextView = findViewById(R.id.welcome_text_view);
         addPetButton = findViewById(R.id.add_pet_button);
         viewPetsButton = findViewById(R.id.view_pets_button);
+        logoutButton = findViewById(R.id.logout_button);
 
-        currentUserId = getIntent().getIntExtra(EXTRA_USER_ID, -1);
-        if (currentUserId == -1) {
-            Toast.makeText(this, "User ID not found, please log in again.", Toast.LENGTH_LONG).show();
-            finish();
-        }
+        // Update the welcome message to use the retrieved username
+        String welcomeMessage = "Welcome, " + currentUsername + "!";
+        welcomeTextView.setText(welcomeMessage);
 
         addPetButton.setOnClickListener(v -> {
             Intent intent = AddPetActivity.newIntent(this, currentUserId, -1);
@@ -48,6 +67,12 @@ public class DashboardActivity extends AppCompatActivity {
         viewPetsButton.setOnClickListener(v -> {
             Intent intent = PetListActivity.newIntent(this, currentUserId);
             startActivity(intent);
+        });
+
+        logoutButton.setOnClickListener(v -> {
+            Intent intent = LoginActivity.newIntent(DashboardActivity.this);
+            startActivity(intent);
+            finish();
         });
     }
 }
