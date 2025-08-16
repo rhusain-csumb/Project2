@@ -1,8 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-//    id 'com.android.application'
-    //  id 'org.jetbrains.kotlin.android'
-    //id 'kotlin-kapt'
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -25,11 +23,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }
+
 
 dependencies {
 
@@ -43,14 +47,29 @@ dependencies {
     implementation libs.room.common.jvm
 
     implementation libs.room.runtime.android
+    implementation libs.core
+    implementation libs.androidx.junit
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
     def room_version = "2.6.1" // Use the latest stable version
+    implementation "androidx.cardview:cardview:1.0.0"
+    testImplementation "org.robolectric:robolectric:4.10.3"
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    // Room dependencies
+    implementation 'androidx.room:room-runtime:2.5.0'
+    annotationProcessor 'androidx.room:room-compiler:2.5.0'
+    testImplementation 'androidx.room:room-testing:2.5.0'
+
+    // JUnit and testing libraries
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'androidx.test.ext:junit:1.1.5'
+    testImplementation 'androidx.test:core:1.5.0'
+
 
 }
 
