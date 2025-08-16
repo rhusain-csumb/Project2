@@ -51,6 +51,9 @@
         <activity android:name=".HealthLogDetailActivity" />
         <activity android:name=".HealthLogActivity" />
         <activity android:name=".AppointmentActivity" />
+        <activity android:name=".AdminOptionsActivity" />
+        <activity android:name=".ManagePetsActivity" />
+
     </application>
 
 </manifest>
