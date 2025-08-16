@@ -1,8 +1,17 @@
 /**
- * This is an android moble application called PetPal. This practical app will track pet visits,
- * vaccinations, feeding schedules, and medications. Key features will include an emergency contact list
- * and the potential to scan food/medication for streamlined data entry.
- * @authors: Rasna Husain and Chanroop Randhawa
+ * PetAdapter.java
+ *
+ * Adapter class for displaying a list of Pet objects inside a RecyclerView.
+ *
+ * This adapter handles two main tasks:
+ *  1. Binding pet data to the UI elements in the item layout.
+ *  2. Handling click events for each pet, including optional delete functionality.
+ *
+ * @authors:
+ *   Rasna Husain
+ *   Chanroop Randhawa
+ *
+ *   Last Updated: August 15, 2025
  */
 
 package com.example.PetPal.adapter;
@@ -10,6 +19,7 @@ package com.example.PetPal.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,64 +28,107 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.PetPal.R;
 import com.example.PetPal.model.Pet;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
-    private List<Pet> petList;
-    private final OnPetClickListener listener;
+    // List of Pet objects to display in the RecyclerView
+    private List<Pet> pets;
+    // Listener for handling click events
+    private OnPetClickListener listener;
+    // Boolean flag to determine if delete button should be shown
+    private boolean showDeleteButton;
 
+    /**
+     * Interface for handling click events on pet items.
+     * Activities/Fragments using this adapter must implement these.
+     */
     public interface OnPetClickListener {
-        void onPetClick(Pet pet);
+        void onPetClick(Pet pet); // Click on a pet item
+
+        // Optional method for delete clicks (default empty implementation)
+        default void onDeleteClick(Pet pet) {}
     }
 
-    public PetAdapter(List<Pet> petList, OnPetClickListener listener) {
-        this.petList = petList;
+    /**
+     * Constructor for PetAdapter
+     *
+     * @param petList - initial list of pets
+     * @param listener - click event listener
+     * @param showDeleteButton - whether delete button should be visible
+     */
+    public PetAdapter(List<Pet> petList, OnPetClickListener listener, boolean showDeleteButton) {
+        this.pets = petList;
         this.listener = listener;
+        this.showDeleteButton = showDeleteButton;
+    }
+
+    /**
+     * Update the list of pets in the adapter
+     *
+     * @param pets - new list of pets
+     */
+    public void setPets(List<Pet> pets) {
+        this.pets = pets != null ? pets : new ArrayList<>();
+        notifyDataSetChanged(); // Refresh the RecyclerView
     }
 
     @NonNull
     @Override
     public PetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pet, parent, false);
+        // Inflate the layout for a single pet item
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_pet, parent, false);
         return new PetViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
-        Pet pet = petList.get(position);
-        holder.bind(pet, listener);
+        // Get the pet at the given position
+        Pet pet = pets.get(position);
+        // Bind data to the ViewHolder
+        holder.bind(pet, listener, showDeleteButton);
     }
 
     @Override
     public int getItemCount() {
-        return petList.size();
+        return pets.size();
     }
 
-    public void updatePets(List<Pet> newPets) {
-        this.petList = newPets;
-        notifyDataSetChanged();
-    }
-
+    /**
+     * ViewHolder class for individual pet items
+     */
     static class PetViewHolder extends RecyclerView.ViewHolder {
-        private final TextView petNameTextView;
-        private final TextView petSpeciesTextView;
+        TextView petNameTextView;
+        ImageButton deleteButton;
 
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
-            petNameTextView = itemView.findViewById(R.id.pet_name_text_view);
-            petSpeciesTextView = itemView.findViewById(R.id.pet_species_text_view);
+            // Find UI elements in the layout
+            petNameTextView = itemView.findViewById(R.id.pet_name_text);
+            deleteButton = itemView.findViewById(R.id.delete_pet_button);
         }
 
-        public void bind(final Pet pet, final OnPetClickListener listener) {
-            petNameTextView.setText(pet.pet_name);
-            petSpeciesTextView.setText(pet.species);
+        /**
+         * Bind pet data and click events to UI components
+         */
+        public void bind(final Pet pet, final OnPetClickListener listener, boolean showDeleteButton) {
+            // Set the pet's name in the TextView
+            petNameTextView.setText(pet.getPetName());
 
-            itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onPetClick(pet);
+            // Handle item click
+            itemView.setOnClickListener(v -> listener.onPetClick(pet));
+
+            // Handle delete button visibility & click
+            if (deleteButton != null) {
+                if (showDeleteButton) {
+                    deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setOnClickListener(v -> listener.onDeleteClick(pet));
+                } else {
+                    deleteButton.setVisibility(View.GONE);
                 }
-            });
+            }
         }
     }
 }
